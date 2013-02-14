@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cd /tmp
+exec gnome-terminal -x /bin/bash -ic "autorun_sync MSD"

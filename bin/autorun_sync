@@ -1,0 +1,64 @@
+#!/bin/bash
+
+set -e
+
+source caritas_functions.sh
+
+SYNC_DIR=
+
+load_config
+
+cfg SYNC_DIR "$HOME/sync"
+
+usage()
+{
+	echo "Usage: $prog <media>"
+}
+
+prog=$(basename $0)
+
+if [ $# -lt 1 ]; then
+	usage
+	echo -n "Press any key to continue:"
+	read
+	exit -1
+fi
+
+media=$1
+mdir=/media/$media
+
+ldir=/data/sync/$media
+odir=$ldir/data_out
+idir=$ldir/data_in
+
+echo "----------------------------------------------"
+echo -n "Rsyncing ..."
+rsync -rutv --delete --modify-window=2 $odir/* $mdir/
+
+if [ -f $ldir/dirs.in ]; then
+	while read d p; do
+		if [ -z "$d" ]; then
+			continue;
+		fi
+		rsync -rutv --modify-window=2 $p $mdir/$d $idir/
+	done < $ldir/dirs.in
+fi
+echo "Done!"
+
+echo "----------------------------------------------"
+echo -n "Syncing ..."
+sync
+echo "Done!"
+
+echo "----------------------------------------------"
+echo -n "Do you want to umount [Y|n]:"
+read is_umount
+if [ "$is_umount" != "n" ]; then
+	echo -n "Unmounting ..."
+	umount /media/$media
+	echo "Done!"
+fi
+
+echo "----------------------------------------------"
+echo -n "Done! press any key to close:"
+read
