@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# waCalibrate.sh: recalibrates the wacom stylus
+#
+# Author: Rogan Creswick
+# License: just be nice
+
+# Set LOG to something reasonable:
+# (The file does not need to exist, but the *directory* does)
+LOG_DIR=/tmp/wacom
+LOG=${LOG_DIR}/calibration.out
+XSETWACOM=/usr/bin/xsetwacom
+
+if [ -z "$DISPLAY" ]; then
+    export DISPLAY=:0.0
+fi
+
+#
+# Calibrates the wacom devices {stylus, eraser, cursor} with the
+# given offsets:
+#
+#  Usage:
+#     calibrate <topx> <topy> <bottomx> <bottomy>
+#
+function calibrate {
+    ${XSETWACOM} set stylus TopX $1 >> ${LOG} 2>&1
+    ${XSETWACOM} set stylus TopY $2 >> ${LOG} 2>&1
+    ${XSETWACOM} set stylus BottomX $3 >> ${LOG} 2>&1
+    ${XSETWACOM} set stylus BottomY $4 >> ${LOG} 2>&1
+
+    ${XSETWACOM} set eraser TopX $1 >> ${LOG} 2>&1
+    ${XSETWACOM} set eraser TopY $2 >> ${LOG} 2>&1
+    ${XSETWACOM} set eraser BottomX $3 >> ${LOG} 2>&1
+    ${XSETWACOM} set eraser BottomY $4 >> ${LOG} 2>&1
+
+    ${XSETWACOM} set cursor TopX $1 >> ${LOG} 2>&1
+    ${XSETWACOM} set cursor TopY $2 >> ${LOG} 2>&1
+    ${XSETWACOM} set cursor BottomX $3 >> ${LOG} 2>&1
+    ${XSETWACOM} set cursor BottomY $4 >> ${LOG} 2>&1
+}
+
+
+function fixCalibration {
+    # get the current orientation:
+    ORIENTATION=`xrandr --verbose --query | grep " connected" | awk '{print $5}'`
+    echo "Orientation: ${ORIENTATION}" >> ${LOG}
+   
+    case "${ORIENTATION}" in
+    normal)
+        calibrate -3 -173 24518 18478   
+        ;;
+    left)
+        calibrate -46 -3 18605 24518
+        ;;
+    right)
+        calibrate -173 58 18478 24579
+        ;;
+    inverted)
+        calibrate 58 -46 24579 18605
+        ;;
+    *)
+        calibrate -3 -173 24518 18478
+        echo "ERROR!! unknown orientation! ${ORIENTATION}" >> ${LOG}
+        ;;
+    esac
+}
+
+mkdir -p ${LOG_DIR}
+date >> ${LOG}
+fixCalibration
+whoami >> ${LOG}

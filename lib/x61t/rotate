@@ -1,0 +1,80 @@
+#!/bin/bash
+
+STYLUS="Serial Wacom Tablet stylus"
+ERASER="Serial Wacom Tablet eraser"
+
+CUR_ROTATE=$(xsetwacom get "$STYLUS" Rotate)
+
+set_key_common()
+{
+	setkeycodes 0x6c 149
+	setkeycodes 0x68 109
+	setkeycodes 0x6b 109
+	setkeycodes 0x69 28
+}
+
+skc_ccw()
+{
+	setkeycodes 0x6e 104
+	setkeycodes 0x71 106
+	setkeycodes 0x6d 109
+	setkeycodes 0x6f 105
+}
+
+skc_cw()
+{
+	setkeycodes 0x6e 109
+	setkeycodes 0x71 105
+	setkeycodes 0x6d 104
+	setkeycodes 0x6f 106
+}
+
+skc_nor()
+{
+	setkeycodes 0x6e 105
+	setkeycodes 0x71 104
+	setkeycodes 0x6d 106
+	setkeycodes 0x6f 109
+}
+
+set_key()
+{
+	ROTATE=${1:-none}
+	set_key_common
+	case $ROTATE in
+	ccw)
+		skc_ccw
+		;;
+	cw)
+		skc_cw
+		;;
+	*)
+		skc_nor
+		;;
+	esac
+}
+
+case $CUR_ROTATE in
+none)
+	WACOM_ROTATE=ccw
+	XRANDR_ROTATE=left
+	;;
+100)
+	WACOM_ROTATE=cw
+	XRANDR_ROTATE=right
+	;;
+*)
+	WACOM_ROTATE=none
+	XRANDR_ROTATE=normal
+	;;
+esac
+
+if [ "$1" = "-s" ]; then
+	set_key $CUR_ROTATE
+else
+	set_key $WACOM_ROTATE
+	xsetwacom set "$STYLUS" Rotate $WACOM_ROTATE
+	xsetwacom set "$ERASER" Rotate $WACOM_ROTATE
+#	xsetwacom set cursor Rotate $WACOM_ROTATE
+	xrandr --output LVDS1 --rotate $XRANDR_ROTATE
+fi

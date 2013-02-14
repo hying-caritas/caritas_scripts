@@ -1,0 +1,13 @@
+#!/bin/bash
+
+usage()
+{
+	echo "Usage: $(basename $0) <output file>"
+	exit 1
+}
+
+[ $# -ne 1 ] && usage
+
+outfn="$1"
+
+sudo bash -c "cat > $outfn"

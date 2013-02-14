@@ -1,0 +1,35 @@
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides:          poweroff_fix
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     
+# Default-Stop:      0
+# Short-Description: Fixes for power off
+# Description:       Fix for clean shutdown on battery [Thinkpad X220]
+### END INIT INFO
+# Author: Huang Ying
+# Purpose: Fix for clean shutdown on battery (Thinkpad X121e)
+
+ehci_disable_runtime_pm()
+{
+	for f in /sys/bus/pci/drivers/ehci_hcd/*/power/control; do
+		echo on > $f
+	done
+}
+
+case $1 in
+  start|restart|reload|force-reload|status)
+    ;;
+
+  stop)
+    echo "Disable ehci_hcd runtime power management [ThinkPad Fix]."
+    ehci_disable_runtime_pm
+    ;;
+
+  *)
+    echo "Usage: $0 {stop|start|restart|reload|force-reload}" >&2
+    exit 2
+    ;;
+esac
+exit 0

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+case "$1" in
+    thaw|resume)
+        nohup /usr/local/sbin/power_save_m.sh > /dev/null &
+        ;;
+    *)
+        ;;
+esac
+exit 0
