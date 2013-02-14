@@ -27,7 +27,7 @@ fi
 media=$1
 mdir=/media/$media
 
-ldir=/data/sync/$media
+ldir=$SYNC_DIR/$media
 odir=$ldir/data_out
 idir=$ldir/data_in
 
