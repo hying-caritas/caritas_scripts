@@ -48,12 +48,34 @@ normalize_path()
 	(cd "$path"; pwd)
 }
 
+search_PATH()
+{
+	local path="$1"
+	local dir="$2"
+
+	[ $# -ne 2 ] && die_invalid
+	echo "$path" | tr ':' '\n' | grep -q "^$dir\$"
+}
+
 prepend_PATH()
 {
 	local dir="$1"
+	[ $# -ne 1 ] && die_invalid
 	dir=$(normalize_path "$dir")
-	if ! echo $PATH | tr ':' '\n' | grep -q "^$dir\$"; then
+	if ! search_PATH $PATH "$dir"; then
 		export PATH=$dir:$PATH
+	fi
+}
+
+prepend_PYTHONPATH()
+{
+	local dir="$1"
+	[ $# -ne 1 ] && die_invalid
+	dir=$(normalize_path "$dir")
+	if [ -z "$PYTHONPATH" ]; then
+		export PYTHONPATH="$dir"
+	elif ! search_PATH "$PYTHONPATH" "$dir"; then
+		export PYTHONPATH="$dir:$PYTHONPATH"
 	fi
 }
 
