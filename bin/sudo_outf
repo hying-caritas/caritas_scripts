@@ -2,12 +2,29 @@
 
 usage()
 {
-	echo "Usage: $(basename $0) <output file>"
+	echo "Usage: $(basename $0) [-a] <output file>"
 	exit 1
 }
 
-[ $# -ne 1 ] && usage
+append=0
 
-outfn="$1"
+while [ $# -ne 0 ]; do
+	case "$1" in
+		-a)
+			append=1
+			shift
+			;;
+		*)
+			outfn="$1"
+			shift;
+			;;
+	esac
+done
 
-sudo bash -c "cat > $outfn"
+[ -z "$outfn" ] && usage
+
+if ((append)); then
+	sudo bash -c "cat >> $outfn"
+else
+	sudo bash -c "cat > $outfn"
+fi
