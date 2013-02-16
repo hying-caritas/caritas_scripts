@@ -10,8 +10,13 @@ WORK_HOSTS=
 HOME_HOSTS=
 WORK_INTERNAL_DOMAINS=
 HOME_INTERNAL_DOMAINs=
+WORK_USE_SOCKS_PROXY=
+HOME_USE_SOCKS_PROXY=
 
 load_config
+
+cfg WORK_USE_SOCKS_PROXY 1
+cfg HOME_USE_SOCKS_PROXY 1
 
 prog=$(basename $0)
 
@@ -59,27 +64,48 @@ Acquire::ftp::Proxy \"http://$proxy_host/$proxy_port\";" |
 	fi
 }
 
-HOSTS_PREFIX="# ==== CARITAS SWITCH_NET BEGIN ===="
-HOSTS_POSTFIX="# ==== CARITAS SWITCH_NET END ===="
+SWITCH_NET_BEGIN="# ==== CARITAS SWITCH_NET BEGIN ===="
+SWITCH_NET_END="# ==== CARITAS SWITCH_NET END ===="
 
 setup_hosts()
 {
 	local hosts="$1"
 	[ $# -ne 1 ] && die_invalid
 
-	sudo sed -ie "/$HOSTS_PREFIX/,/$HOSTS_POSTFIX/d" /etc/hosts
+	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" /etc/hosts
 	if [ -z "$hosts" ]; then
 		return
 	fi
-	echo "$HOSTS_PREFIX
+	echo "$SWITCH_NET_BEGIN
 $hosts
-$HOSTS_POSTFIX" | sudo_outf -a /etc/hosts
+$SWITCH_NET_END" | sudo_outf -a /etc/hosts
+}
+
+setup_tsocks()
+{
+	local use_proxy="$1"
+	[ $# -ne 1 ] && die_invalid
+
+	if ! [ -f /etc/tsocks.conf ]; then
+		return
+	fi
+
+	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" /etc/tsocks.conf
+
+	if (($use_proxy)); then
+		return
+	fi
+	echo "$SWITCH_NET_BEGIN
+local = 0.0.0.0/0.0.0.0
+$SWITCH_NET_END" | sudo_outf -a /etc/tsocks.conf
 }
 
 if [ "$tnet" == "work" ]; then
 	setup_proxy "$WORK_HTTP_PROXY_HOST" "$WORK_HTTP_PROXY_PORT" "$WORK_INTERNAL_DOMAINS"
 	setup_hosts "$WORK_HOSTS"
+	setup_tsocks "$WORK_USE_SOCKS_PROXY"
 else
 	setup_proxy "$HOME_HTTP_PROXY_HOST" "$HOME_HTTP_PROXY_PORT" "$HOME_INTERNAL_DOMAINS"
 	setup_hosts "$HOME_HOSTS"
+	setup_tsocks "$HOME_USE_SOCKS_PROXY"
 fi
