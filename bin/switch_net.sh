@@ -44,14 +44,14 @@ setup_proxy()
 	[ $# -ne 3 ] && die_invalid
 
 	if [ -z "$proxy_host" ]; then
-		sudo rm -f /etc/apt/apt.conf.avail/99proxy
+		sudo rm -f /etc/apt/apt.conf.d/99proxy
 		gsettings set org.gnome.system.proxy mode none
 		gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8']"
 		return
 	fi
 	echo "Acquire::http::Proxy \"http://$proxy_host/$proxy_port\";
 Acquire::ftp::Proxy \"http://$proxy_host/$proxy_port\";" |
-		sudo_outf /etc/apt/apt.conf.avail/99proxy
+		sudo_outf /etc/apt/apt.conf.d/99proxy
 	gsettings set org.gnome.system.proxy mode manual
 	for proto in http https ftp; do
 		gsettings set org.gnome.system.proxy.$proto host "$proxy_host"
