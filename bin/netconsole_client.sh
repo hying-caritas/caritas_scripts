@@ -13,7 +13,7 @@ net_dev=
 
 load_config
 
-[ -z "$target_host -o -z "$target_mac" ] && die "Please configure target hostname/mac"
+[ -z "$target_host" -o -z "$target_mac" ] && die "Please configure target hostname/mac"
 
 cfg source_host "$HOSTNAME"
 cfg src_port 6665
