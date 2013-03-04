@@ -58,3 +58,8 @@ wkhtmltopdf_nook_table()
 {
 	wkhtmltopdf-amd64 --page-height 204mm --page-width 120mm -B 1mm -L 1mm -R 1mm -T 1mm "$@"
 }
+
+pmake()
+{
+	make -j $((2*$nr_cpu)) "$@"
+}
