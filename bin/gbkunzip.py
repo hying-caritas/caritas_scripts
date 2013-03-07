@@ -15,7 +15,7 @@ import os
 import sys
 import zipfile
 
-def gbkunzip(zip_fn)
+def gbkunzip(zip_fn):
     try:
         zip_obj = zipfile.ZipFile(zip_fn, 'r')
     except IOError as e:
