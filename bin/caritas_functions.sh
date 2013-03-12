@@ -23,6 +23,13 @@ cfg()
 		 fi"
 }
 
+def_cfg()
+{
+	local var="$1"
+	[ $# -ne 1 ] && die_invalid
+	return 0
+}
+
 load_config()
 {
 	for config_dir in $CARITAS_SCRIPTS_CONFIG ./.caritas_scripts_config $HOME/.config/caritas_scripts; do
