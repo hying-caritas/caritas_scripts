@@ -61,5 +61,5 @@ wkhtmltopdf_nook_table()
 
 pmake()
 {
-	make -j $((2*$nr_cpu)) "$@"
+	make -j $((2*$nr_cpu)) "$@" 2>&1 | tee make.log
 }
