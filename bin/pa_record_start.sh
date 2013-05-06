@@ -22,11 +22,12 @@ fi
 curr_time=$(date +%Y_%m_%d_%H_%M_%S)
 ofn="${prefix}_${curr_time}.ogg"
 
-beep()
+notify()
 {
 	if which mplayer > /dev/null && [ -f $beep_sound_file ]; then
 		mplayer -nolirc -really-quiet $beep_sound_file
 	fi
+	gnotify.py -a "pa record" "recording start"
 }
 
 setup_record()
@@ -52,5 +53,5 @@ start_record()
 
 setup_record
 if start_record; then
-	beep
+	notify
 fi
