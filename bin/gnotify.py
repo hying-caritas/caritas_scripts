@@ -10,8 +10,9 @@ def notify(timeout, title, message):
     n = pynotify.Notification(title, message)
     n.set_timeout(timeout)
     n.show()
-    time.sleep(timeout / 1000)
-    n.close()
+    if timeout != 0:
+        time.sleep(timeout / 1000)
+        n.close()
 
 def main(argv):
     cmd = os.path.basename(argv[0])
