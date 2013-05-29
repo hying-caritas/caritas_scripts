@@ -29,11 +29,14 @@ fi
 
 cdist=$(current_dist)
 if [ "$tdist" != "$cdist" ]; then
-	cp /etc/apt/sources.list.$tdist /etc/apt/sources.list
-	mv /var/lib/apt/lists /var/lib/apt/lists.$cdist
+	sudo sed -i '1,$s/'$cdist/$tdist'/g' /etc/apt/sources.list
+	sudo rm -rf /var/lib/apt/lists.$cdist
+	sudo mv /var/lib/apt/lists /var/lib/apt/lists.$cdist
 	if [ -d /var/lib/apt/lists.$tdist ]; then
-		mv /var/lib/apt/lists.$tdist /var/lib/apt/lists
+		sudo mv /var/lib/apt/lists.$tdist /var/lib/apt/lists
+	else
+		sudo mkdir /var/lib/apt/lists
 	fi
 fi
 
-apt-get update
+sudo apt-get update
