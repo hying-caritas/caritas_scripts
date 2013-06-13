@@ -63,3 +63,8 @@ pmake()
 {
 	make -j $((2*$nr_cpu)) "$@" 2>&1 | tee pmake.log
 }
+
+bgrun()
+{
+	nohup "$@" &> /dev/null &
+}
