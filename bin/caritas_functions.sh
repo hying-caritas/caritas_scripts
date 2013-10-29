@@ -91,7 +91,7 @@ temp_file()
 	temp_file_seq=$((temp_file_n+1))
 	local prefix="${1:-$0}"
 	prefix=${prefix////-}
-	if which tempfile > /dev/null; then
+	if which tempfile &> /dev/null; then
 		tempfile --prefix="$prefix"
 	else
 		echo "/tmp/$prefix-$$-$temp_file_seq"
