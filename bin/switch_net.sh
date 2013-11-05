@@ -36,6 +36,23 @@ if [ $tnet != "home" -a $tnet != "work" ]; then
 	exit -1
 fi
 
+setup_apt_proxy()
+{
+	local proxy_host="$1"
+	local proxy_port="$2"
+
+	[ -d /etc/apt ] || return
+
+	if [ -z "$proxy_host" ]; then
+		sudo rm -f /etc/apt/apt.conf.d/99proxy
+		return
+	fi
+
+	echo "Acquire::http::Proxy \"http://$proxy_host:$proxy_port\";
+Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
+		sudo_outf /etc/apt/apt.conf.d/99proxy
+}
+
 setup_proxy()
 {
 	local proxy_host="$1"
@@ -43,15 +60,13 @@ setup_proxy()
 	local internal_domains="$3"
 	[ $# -ne 3 ] && die_invalid
 
+	setup_apt_proxy $proxy_host $proxy_port
+
 	if [ -z "$proxy_host" ]; then
-		sudo rm -f /etc/apt/apt.conf.d/99proxy
 		gsettings set org.gnome.system.proxy mode none
 		gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8']"
 		return
 	fi
-	echo "Acquire::http::Proxy \"http://$proxy_host:$proxy_port\";
-Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
-		sudo_outf /etc/apt/apt.conf.d/99proxy
 	gsettings set org.gnome.system.proxy mode manual
 	for proto in http https ftp; do
 		gsettings set org.gnome.system.proxy.$proto host "$proxy_host"
