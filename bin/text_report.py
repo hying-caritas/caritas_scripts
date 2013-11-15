@@ -94,7 +94,7 @@ watch_mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE | \
 
 class WatchProcess(pyinotify.ProcessEvent):
     def __init__(self, top_level_path, out_file_name):
-        pyinotify.ProcessEvent()
+        pyinotify.ProcessEvent.__init__(self)
         self.top_level_path = top_level_path
         self.out_file_name = out_file_name
     def process_default(self, event):
