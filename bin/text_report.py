@@ -25,12 +25,25 @@ file_name_excludes = [
 
 re_file_name_excludes = [re.compile(pat) for pat in file_name_excludes]
 
+re_pattern = None
+
 re_dos_nl = re.compile('\r\n')
 
-def dos2unix(fin, fout):
+def write_file(full_file_name, fout):
+    fin = open_file(full_file_name)
+    if not fin:
+        return
+    fout.write('----------------------------------------------------\n')
+    fout.write('[[%s]]\n' % (full_file_name,))
+    fout.write('____________________________________________________\n')
+
     for line in fin:
         nline = re_dos_nl.sub('\n', line)
-        fout.write(nline)
+        if re_pattern:
+            if re_pattern.search(nline):
+                fout.write(nline)
+        else:
+            fout.write(nline)
 
 def exclude_file_names(file_names):
     efns = []
@@ -59,6 +72,25 @@ def sort_files(dir_path, file_names):
     sfns = [m_fn[1] for m_fn in m_fns]
     return sfns
 
+def open_file(file_name):
+    try:
+        fin = file(file_name)
+    except IOError as e:
+        if e.errno == 2: # file may be deleted during report generating
+            return None
+        else:
+            raise
+    return fin
+
+def filter_file(file_name):
+    if re_pattern is None:
+        return True
+    fin = open_file(file_name)
+    for line in fin:
+        if re_pattern.search(line):
+            return True
+    return False
+
 def gen_report(top_level_path, out_file_name):
     fout = file(out_file_name, 'wb')
     for dir_path, dir_names, file_names in os.walk(top_level_path):
@@ -66,55 +98,16 @@ def gen_report(top_level_path, out_file_name):
         file_names = sort_files(dir_path, file_names)
         for file_name in file_names:
             full_file_name = os.path.join(dir_path, file_name)
-            fout.write('----------------------------------------------------\n')
-            fout.write('[[%s]]\n' % (full_file_name,))
-            fout.write('____________________________________________________\n')
-            try:
-                fin = file(full_file_name)
-            except IOError as e:
-                if e.errno == 2: # file may be deleted during report generating
-                    pass
-                else:
-                    raise
-            dos2unix(fin, fout)
+            if filter_file(full_file_name):
+                write_file(full_file_name, fout)
 
-def test_gen_report():
-    top_level_path = sys.argv[1];
+def main():
+    global re_pattern
+    if len(sys.argv) == 4:
+        re_pattern = re.compile(sys.argv[3])
+    top_level_path = sys.argv[1]
     out_file_name = sys.argv[2]
     gen_report(top_level_path, out_file_name)
 
-############################################################
-# Inotify Watcher
-############################################################
-
-import pyinotify
-
-watch_mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE | \
-    pyinotify.IN_CLOSE_WRITE
-
-class WatchProcess(pyinotify.ProcessEvent):
-    def __init__(self, top_level_path, out_file_name):
-        pyinotify.ProcessEvent.__init__(self)
-        self.top_level_path = top_level_path
-        self.out_file_name = out_file_name
-    def process_default(self, event):
-        print '%08x: %s\n' % (event.mask, event.pathname)
-        gen_report(self.top_level_path, self.out_file_name)
-
-class Watcher(object):
-    def __init__(self, top_level_path, out_file_name):
-        gen_report(top_level_path, out_file_name)
-        self.wm = pyinotify.WatchManager()
-        proc = WatchProcess(top_level_path, out_file_name)
-        self.notifier = pyinotify.ThreadedNotifier(self.wm, proc)
-        self.notifier.start()
-        self.wdd = self.wm.add_watch(top_level_path, watch_mask, rec=True)
-
-def test_watch():
-    top_level_path = sys.argv[1]
-    out_file_name = sys.argv[2]
-    watcher = Watcher(top_level_path, out_file_name)
-    signal.pause()
-
 if __name__ == '__main__':
-    test_watch()
+    main()
