@@ -12,11 +12,13 @@ WORK_INTERNAL_DOMAINS=
 HOME_INTERNAL_DOMAINs=
 WORK_USE_SOCKS_PROXY=
 HOME_USE_SOCKS_PROXY=
+AUTOPROXY_PAC=
 
 load_config
 
 cfg WORK_USE_SOCKS_PROXY 1
 cfg HOME_USE_SOCKS_PROXY 1
+cfg AUTOPROXY_PAC "$HOME/.config/autoproxy.pac"
 
 prog=$(basename $0)
 
@@ -53,6 +55,18 @@ Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
 		sudo_outf /etc/apt/apt.conf.d/99proxy
 }
 
+setup_autoproxy_pac()
+{
+	local proxy_host="$1"
+	local AUTOPROXY_PAC_BAK=$AUTOPROXY_PAC.bak
+
+	if [ -z "$proxy_host" ] && [ -f $AUTOPROXY_PAC ]; then
+		mv $AUTOPROXY_PAC $AUTOPROXY_PAC_BAK
+	elif [ -n "$proxy_host" ] && [ -f $AUTOPROXY_PAC_BAK ]; then
+		mv $AUTOPROXY_PAC_BAK $AUTOPROXY_PAC
+	fi
+}
+
 setup_proxy()
 {
 	local proxy_host="$1"
@@ -61,6 +75,7 @@ setup_proxy()
 	[ $# -ne 3 ] && die_invalid
 
 	setup_apt_proxy $proxy_host $proxy_port
+	setup_autoproxy_pac $proxy_host $proxy_port
 
 	if [ -z "$proxy_host" ]; then
 		gsettings set org.gnome.system.proxy mode none
