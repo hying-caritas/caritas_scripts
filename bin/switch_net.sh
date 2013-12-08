@@ -13,12 +13,14 @@ HOME_INTERNAL_DOMAINs=
 WORK_USE_SOCKS_PROXY=
 HOME_USE_SOCKS_PROXY=
 AUTOPROXY_PAC=
+QUICKLISP_PROXY_CONF=
 
 load_config
 
 cfg WORK_USE_SOCKS_PROXY 1
 cfg HOME_USE_SOCKS_PROXY 1
 cfg AUTOPROXY_PAC "$HOME/.config/autoproxy.pac"
+cfg QUICKLISP_PROXY_CONF "$HOME/quicklisp/config/proxy-url.txt"
 
 prog=$(basename $0)
 
@@ -55,15 +57,17 @@ Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
 		sudo_outf /etc/apt/apt.conf.d/99proxy
 }
 
-setup_autoproxy_pac()
+setup_proxy_config()
 {
 	local proxy_host="$1"
-	local AUTOPROXY_PAC_BAK=$AUTOPROXY_PAC.bak
+	local proxy_port="$2"
+	local config_file="$3"
+	local config_file_bak=$config_file.bak
 
-	if [ -z "$proxy_host" ] && [ -f $AUTOPROXY_PAC ]; then
-		mv $AUTOPROXY_PAC $AUTOPROXY_PAC_BAK
-	elif [ -n "$proxy_host" ] && [ -f $AUTOPROXY_PAC_BAK ]; then
-		mv $AUTOPROXY_PAC_BAK $AUTOPROXY_PAC
+	if [ -z "$proxy_host" ] && [ -f $config_file ]; then
+		mv $config_file $config_file_bak
+	elif [ -n "$proxy_host" ] && [ -f $config_file_bak ]; then
+		mv $config_file_bak $config_file
 	fi
 }
 
@@ -75,7 +79,9 @@ setup_proxy()
 	[ $# -ne 3 ] && die_invalid
 
 	setup_apt_proxy $proxy_host $proxy_port
-	setup_autoproxy_pac $proxy_host $proxy_port
+	for config_file in $AUTOPROXY_PAC $QUICKLISP_PROXY_CONF; do
+		setup_proxy_config "$proxy_host" "$proxy_port" "$config_file"
+	done
 
 	if [ -z "$proxy_host" ]; then
 		gsettings set org.gnome.system.proxy mode none
