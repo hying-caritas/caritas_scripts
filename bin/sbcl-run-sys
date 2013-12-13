@@ -1,0 +1,5 @@
+#!/bin/bash
+
+system=$1
+shift
+exec sbcl --noinform --no-userinit --eval "(require \"asdf\")" --eval "(require \"$system\")" --eval "($system:main)" --quit --end-toplevel-options "$@"
