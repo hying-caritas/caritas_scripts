@@ -2,6 +2,7 @@
 
 source caritas_functions.sh
 
+CONFIG_DIR=
 WORK_HTTP_PROXY_HOST=
 WORK_HTTP_PROXY_PORT=
 HOME_HTTP_PROXY_HOST=
@@ -17,9 +18,10 @@ QUICKLISP_PROXY_CONF=
 
 load_config
 
+cfg CONFIG_DIR "$HOME/.config/switch_net"
 cfg WORK_USE_SOCKS_PROXY 1
 cfg HOME_USE_SOCKS_PROXY 1
-cfg AUTOPROXY_PAC "$HOME/.config/autoproxy.pac"
+cfg AUTOPROXY_PAC "$CONFIG_DIR/autoproxy.pac"
 cfg QUICKLISP_PROXY_CONF "$HOME/quicklisp/config/proxy-url.txt"
 
 prog=$(basename $0)
@@ -35,7 +37,13 @@ if [ $# -ne 1 ]; then
 fi
 
 tnet=$1
-if [ $tnet != "home" -a $tnet != "work" ]; then
+if [ $tnet = "home" ]; then
+	rm -f "$CONFIG_DIR/work"
+	touch "$CONFIG_DIR/home"
+elif [ $tnet = "work" ]; then
+	rm -f "$CONFIG_DIR/home"
+	touch "$CONFIG_DIR/work"
+else
 	usage
 	exit -1
 fi
