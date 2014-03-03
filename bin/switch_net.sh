@@ -31,18 +31,21 @@ usage()
 	echo "Usage: $prog <home|work>"
 }
 
-if [ $# -ne 1 ]; then
-	usage
-	exit -1
-fi
-
 tnet=$1
-if [ $tnet = "home" ]; then
+if [ "$tnet" = "home" ]; then
 	rm -f "$CONFIG_DIR/work"
 	touch "$CONFIG_DIR/home"
-elif [ $tnet = "work" ]; then
+elif [ "$tnet" = "work" ]; then
 	rm -f "$CONFIG_DIR/home"
 	touch "$CONFIG_DIR/work"
+elif [ "$tnet" = "-i" ]; then
+	echo -n "switch_net [w|H]: "
+	read tnet
+	if [ "$tnet" = w ]; then
+		tnet=work
+	else
+		tnet=home
+	fi
 else
 	usage
 	exit -1
