@@ -32,13 +32,8 @@ usage()
 }
 
 tnet=$1
-if [ "$tnet" = "home" ]; then
-	rm -f "$CONFIG_DIR/work"
-	touch "$CONFIG_DIR/home"
-elif [ "$tnet" = "work" ]; then
-	rm -f "$CONFIG_DIR/home"
-	touch "$CONFIG_DIR/work"
-elif [ "$tnet" = "-i" ]; then
+
+if [ "$tnet" = "-i" ]; then
 	echo -n "switch_net [w|H]: "
 	read tnet
 	if [ "$tnet" = w ]; then
@@ -46,6 +41,14 @@ elif [ "$tnet" = "-i" ]; then
 	else
 		tnet=home
 	fi
+fi
+
+if [ "$tnet" = "home" ]; then
+	rm -f "$CONFIG_DIR/work"
+	touch "$CONFIG_DIR/home"
+elif [ "$tnet" = "work" ]; then
+	rm -f "$CONFIG_DIR/home"
+	touch "$CONFIG_DIR/work"
 else
 	usage
 	exit -1
