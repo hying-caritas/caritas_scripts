@@ -23,7 +23,7 @@ def gbkunzip(zip_fn):
         exit(1)
 
     for name in zip_obj.namelist():
-        name_utf8 = name.decode('gbk')
+        name_utf8 = name.decode('gb18030')
         path = os.path.dirname(name_utf8)
 
         if (not os.path.exists(path)) and path:
