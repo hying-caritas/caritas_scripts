@@ -102,3 +102,8 @@ lookup()
 {
 	nslookup "$1" | grep Address | tail -1 | cut -d ' ' -f 2
 }
+
+psc()
+{
+	ps xawf -eo pid,user,cgroup,args
+}
