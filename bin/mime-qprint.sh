@@ -10,13 +10,13 @@ quote()
 	done
 }
 
-string=$1
+string="$(cat)"
 
 echo -n =?$target_encoding?Q?
 for ((i=0; i<${#string}; i++)); do
 	c=${string:$i:1}
 	case "$c" in
-		[[:space:]] | =)
+		[[:space:]] | = | \?)
 			quote "$c"
 			;;
 		[[:print:]])
