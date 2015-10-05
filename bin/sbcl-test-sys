@@ -1,0 +1,4 @@
+#!/bin/bash
+
+system=$1
+exec sbcl --noinform --no-userinit --eval "(require \"asdf\")" --eval "(asdf:test-system :$system)" --quit --end-toplevel-options "$@"
