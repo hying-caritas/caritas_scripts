@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mute=${1:-1}
+sink=$(pa-default-sink)
+pactl set-sink-mute $sink $mute
