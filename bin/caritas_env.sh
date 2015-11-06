@@ -68,3 +68,8 @@ bgrun()
 {
 	nohup "$@" &> /dev/null &
 }
+
+man()
+{
+        emax -e "(man \"$1\")"
+}
