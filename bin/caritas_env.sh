@@ -69,7 +69,7 @@ bgrun()
 	nohup "$@" &> /dev/null &
 }
 
-man()
+eman()
 {
-        emax -e "(man \"$1\")"
+        emacsclient -e "(man \"$1\")"
 }
