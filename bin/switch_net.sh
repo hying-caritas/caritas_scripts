@@ -73,15 +73,12 @@ Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
 
 setup_proxy_config()
 {
-	local proxy_host="$1"
-	local proxy_port="$2"
-	local config_file="$3"
-	local config_file_bak=$config_file.bak
+	local config_file="$1"
 
-	if [ -z "$proxy_host" ] && [ -f $config_file ]; then
-		mv $config_file $config_file_bak
-	elif [ -n "$proxy_host" ] && [ -f $config_file_bak ]; then
-		mv $config_file_bak $config_file
+	if [ -f $config_file.$tnet ]; then
+		cp $config_file.$tnet $config_file
+	elif [ -f $config_file ]; then
+		mv $config_file.bak
 	fi
 }
 
@@ -94,7 +91,7 @@ setup_proxy()
 
 	setup_apt_proxy $proxy_host $proxy_port
 	for config_file in $AUTOPROXY_PAC $QUICKLISP_PROXY_CONF; do
-		setup_proxy_config "$proxy_host" "$proxy_port" "$config_file"
+		setup_proxy_config "$config_file"
 	done
 
 	if [ -z "$proxy_host" ]; then
