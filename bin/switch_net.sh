@@ -78,7 +78,7 @@ setup_proxy_config()
 	if [ -f $config_file.$tnet ]; then
 		cp $config_file.$tnet $config_file
 	elif [ -f $config_file ]; then
-		mv $config_file.bak
+		mv $config_file $config_file.bak
 	fi
 }
 
