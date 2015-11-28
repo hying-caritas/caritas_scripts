@@ -13,16 +13,13 @@ WORK_INTERNAL_DOMAINS=
 HOME_INTERNAL_DOMAINs=
 WORK_USE_SOCKS_PROXY=
 HOME_USE_SOCKS_PROXY=
-AUTOPROXY_PAC=
-QUICKLISP_PROXY_CONF=
+PROXY_CONFIG_FILES=
 
 load_config
 
 cfg CONFIG_DIR "$HOME/.config/switch_net"
 cfg WORK_USE_SOCKS_PROXY 1
 cfg HOME_USE_SOCKS_PROXY 1
-cfg AUTOPROXY_PAC "$CONFIG_DIR/autoproxy.pac"
-cfg QUICKLISP_PROXY_CONF "$HOME/quicklisp/config/proxy-url.txt"
 
 prog=$(basename $0)
 
@@ -73,13 +70,13 @@ Acquire::ftp::Proxy \"http://$proxy_host:$proxy_port\";" |
 
 setup_proxy_config()
 {
-	local config_file="$1"
-
-	if [ -f $config_file.$tnet ]; then
-		cp $config_file.$tnet $config_file
-	elif [ -f $config_file ]; then
-		mv $config_file $config_file.bak
-	fi
+	for config_file in $PROXY_CONFIG_FILES; do
+		if [ -f $config_file.$tnet ]; then
+			cp $config_file.$tnet $config_file
+		elif [ -f $config_file ]; then
+			mv $config_file $config_file.bak
+		fi
+	done
 }
 
 setup_proxy()
@@ -90,9 +87,6 @@ setup_proxy()
 	[ $# -ne 3 ] && die_invalid
 
 	setup_apt_proxy $proxy_host $proxy_port
-	for config_file in $AUTOPROXY_PAC $QUICKLISP_PROXY_CONF; do
-		setup_proxy_config "$config_file"
-	done
 
 	if [ -z "$proxy_host" ]; then
 		gsettings set org.gnome.system.proxy mode none
@@ -148,10 +142,12 @@ $SWITCH_NET_END" | sudo_outf -a /etc/tsocks.conf
 }
 
 if [ "$tnet" == "work" ]; then
+	setup_proxy_config
 	setup_proxy "$WORK_HTTP_PROXY_HOST" "$WORK_HTTP_PROXY_PORT" "$WORK_INTERNAL_DOMAINS"
 	setup_hosts "$WORK_HOSTS"
 	setup_tsocks "$WORK_USE_SOCKS_PROXY"
 else
+	setup_proxy_config
 	setup_proxy "$HOME_HTTP_PROXY_HOST" "$HOME_HTTP_PROXY_PORT" "$HOME_INTERNAL_DOMAINS"
 	setup_hosts "$HOME_HOSTS"
 	setup_tsocks "$HOME_USE_SOCKS_PROXY"
