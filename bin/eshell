@@ -1,0 +1,9 @@
+#!/bin/bash
+
+program=$(basename "$0")
+[ "$program" != eshell ] && cmd="$program "
+
+cmd="$cmd$*"
+cmd=${cmd//\"/\\\"/}
+
+exec emax -e "(eshell-command \"$cmd\")"

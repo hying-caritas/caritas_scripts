@@ -9,4 +9,4 @@ fi
 
 ! [[ $EMACS ]] && [ -t 1 ] && PARAMS="-t"
 
-emacsclient $PARAMS "$@"
+exec emacsclient $PARAMS "$@"
