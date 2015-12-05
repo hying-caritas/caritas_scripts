@@ -73,3 +73,35 @@ eman()
 {
         emacsclient -e "(man \"$1\")"
 }
+
+find-file()
+{
+	eshell find-file "$@"
+}
+
+find-file-other-window()
+{
+	eshell find-file-other-window "$@"
+}
+
+view-file()
+{
+	eshell view-file "$@"
+}
+
+view-file-other-window()
+{
+	eshell view-file-other-window
+}
+
+dired()
+{
+	[ $# -eq 0 ] && set .
+	eshell dired "$@"
+}
+
+dired-other-window()
+{
+	[ $# -eq 0 ] && set .
+	eshell dired-other-window "$@"
+}
