@@ -69,9 +69,49 @@ bgrun()
 	nohup "$@" &> /dev/null &
 }
 
-eman()
+man()
 {
-        emacsclient -e "(man \"$1\")"
+	if [[ $EMACS ]]; then
+		eshell man "$@"
+	else
+		command man "$@"
+	fi
+}
+
+info()
+{
+	if [[ $EMACS ]]; then
+		eshell info "$@"
+	else
+		command info "$@"
+	fi
+}
+
+make()
+{
+	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+		eshell info "$@"
+	else
+		command info "$@"
+	fi
+}
+
+grep()
+{
+	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+		eshell grep "$@"
+	else
+		command grep "$@"
+	fi
+}
+
+diff()
+{
+	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+		eshell diff "$@"
+	else
+		command diff "$@"
+	fi
 }
 
 find-file()
@@ -105,3 +145,21 @@ dired-other-window()
 	[ $# -eq 0 ] && set .
 	eshell dired-other-window "$@"
 }
+
+find-dired()
+{
+	dir=${1:-.}
+	shift
+	emax -e "(find-dired \"$dir\" \"$*\")"
+}
+
+proced()
+{
+	eshell proced
+}
+
+magit()
+{
+	eshell magit
+}
+
