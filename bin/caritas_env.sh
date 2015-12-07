@@ -163,3 +163,7 @@ magit()
 	eshell magit
 }
 
+apropos-command()
+{
+	eshell apropos-command "$@"
+}
