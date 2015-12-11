@@ -71,7 +71,7 @@ bgrun()
 
 man()
 {
-	if [[ $EMACS ]]; then
+	if [[ $INSIDE_EMACS ]]; then
 		eshell man "$@"
 	else
 		command man "$@"
@@ -80,7 +80,7 @@ man()
 
 info()
 {
-	if [[ $EMACS ]]; then
+	if [[ $INSIDE_EMACS ]]; then
 		eshell info "$@"
 	else
 		command info "$@"
@@ -89,7 +89,7 @@ info()
 
 make()
 {
-	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+	if [[ $INSIDE_EMACS && -t 0 && -t 1 && -t 2 ]]; then
 		eshell info "$@"
 	else
 		command info "$@"
@@ -98,7 +98,7 @@ make()
 
 grep()
 {
-	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+	if [[ $INSIDE_EMACS && -t 0 && -t 1 && -t 2 ]]; then
 		eshell grep "$@"
 	else
 		command grep "$@"
@@ -107,7 +107,7 @@ grep()
 
 diff()
 {
-	if [[ $EMACS && -t 0 && -t 1 && -t 2 ]]; then
+	if [[ $INSIDE_EMACS && -t 0 && -t 1 && -t 2 ]]; then
 		eshell diff "$@"
 	else
 		command diff "$@"
