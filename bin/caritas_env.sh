@@ -90,9 +90,9 @@ info()
 make()
 {
 	if [[ $INSIDE_EMACS && -t 0 && -t 1 && -t 2 ]]; then
-		eshell info "$@"
+		eshell compile "$@"
 	else
-		command info "$@"
+		command make "$@"
 	fi
 }
 
