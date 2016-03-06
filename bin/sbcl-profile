@@ -1,0 +1,14 @@
+#!/bin/bash
+
+system=$1
+expr=$2
+shift 2
+
+exec sbcl --noinform --no-userinit --eval "(require :sb-sprof)" \
+     --eval "(require :asdf)" --eval "(require \"$system\")" \
+     "$@" \
+     --eval "
+(sb-sprof:with-profiling
+  (:max-samples 1000 :report :flat :loop t)
+  $expr)" \
+     --quit --end-toplevel-options
