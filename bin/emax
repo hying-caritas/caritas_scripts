@@ -1,10 +1,13 @@
 #!/bin/bash
 
 USERID=`id -u`
-if [ ! -e /tmp/emacs$USERID/server ]; then
+: ${TMPDIR:=/tmp}
+: ${EMACS_SERVER_FILE:=$TMPDIR/emacs$USERID/server}
+
+if [ ! -e $EMACS_SERVER_FILE ]; then
 	echo "Starting server."
 	emacs --daemon
-	while [ ! -e "/tmp/emacs$USERID/server" ] ; do sleep 1 ; done
+	while [ ! -e $EMACS_SERVER_FILE ] ; do sleep 1 ; done
 fi
 
 ! [[ $INSIDE_EMACS ]] && [ -t 1 ] && PARAMS="-t"
