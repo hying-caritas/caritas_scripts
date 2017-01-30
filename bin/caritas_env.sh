@@ -90,7 +90,7 @@ info()
 make()
 {
 	if [[ $INSIDE_EMACS && -t 0 && -t 1 && -t 2 ]]; then
-		emax -e "(compile \"/usr/bin/make -k $*\")"
+		emax -e "(compile \"command make -k $*\")"
 	else
 		command make "$@"
 	fi
