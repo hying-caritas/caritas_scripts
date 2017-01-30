@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 priorities_avail="required important standard optional extra"
 
@@ -21,7 +21,7 @@ while read package; do
 		continue
 	fi
 	bins=$(dpkg-query -L $package | grep -e '/s\?bin/.\+')
-	[[ $bins ]] || continue
+	[ -n "$bins" ] || continue
 	echo =========================================================================
 	echo -n $package
 	dpkg-query -W -f ': ${Binary:summary}\nHomepage: ${Homepage}\n' $package

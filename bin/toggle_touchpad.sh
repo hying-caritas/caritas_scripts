@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 prev=$(gsettings get org.gnome.settings-daemon.peripherals.touchpad touchpad-enabled)
 

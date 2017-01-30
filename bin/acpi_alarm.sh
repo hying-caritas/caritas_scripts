@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 prog=$(basename $0)
 usage()

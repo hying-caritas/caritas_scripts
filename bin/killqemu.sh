@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 usage()
 {
@@ -13,7 +13,7 @@ shift
 
 pids=$(pgrep -f "qemu-system-.* -name $name")
 
-if [[ $pids ]]; then
+if [ -n "$pids" ]; then
 	kill "$@" $pids
 else
 	echo "No such VM!" 1>&2

@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 #TAGS: kernel
 
 set -e
 
-source caritas_functions.sh
+. caritas_functions.sh
 
 MAKE="make -j$nr_cpu"
 
@@ -21,15 +21,14 @@ xcd() {
 	fi
 }
 
-oldconfig() { 
+oldconfig() {
 	yes "" | $1 $MAKE oldconfig
 }
 
-build() { 
+build() {
 	$MAKE clean
 	$1 nice -n20 $MAKE | tee ../LOG
 }
-	
 
 xcd obj
 oldconfig

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 program=$(basename "$0")
 [ "$program" != eshell ] && cmd="$program "

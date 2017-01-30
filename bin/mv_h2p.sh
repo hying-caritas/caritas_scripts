@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #TAGS: onkyo, mp3
 
 from="$1"

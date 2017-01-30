@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 val=${1:-+10%}
 sink=$(pa-default-sink)

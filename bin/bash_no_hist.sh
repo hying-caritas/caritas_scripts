@@ -1,8 +1,8 @@
-#!/bin/bash
+#!/bin/sh
 
 chg_title()
 {
-        echo -ne "\033]0;""$1""\007"
+	echo -ne "\033]0;""$1""\007"
 }
 
 export TERM=vt100

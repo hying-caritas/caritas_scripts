@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #TAGS: kernel
 
 set -e
@@ -24,12 +24,12 @@ xcd() {
 	fi
 }
 
-oldconfig() { 
+oldconfig() {
 	arch=$1
 	yes "" | kmake_$arch $MAKE_OPT oldconfig
 }
 
-build() { 
+build() {
 	arch=$1
 	kmake_$arch $MAKE_OPT clean
 	nice -n20 kmake_$arch $MAKE_OPT 2>&1 | tee ../log_$arch
@@ -46,7 +46,7 @@ build() {
 #for arch in frv sh4; do
 #MAKE_OPT="-j1"
 for arch in frv sh4 alpha s390 sparc64 arm hppa powerpc i386 x8664; do
-	xcd $arch 
+	xcd $arch
 	./source/scripts/config --enable perf_events
 	oldconfig $arch
 	build $arch
