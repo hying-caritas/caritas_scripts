@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #TAGS: onkyo, mp3
 
 import zhutils.word.word2pinyin.pinyin as pinyin
