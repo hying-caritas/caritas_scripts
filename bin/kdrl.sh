@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #TAGS: kernel
 
 set -e

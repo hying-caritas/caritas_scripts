@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 while read -r line; do
 	for ((i=0; i < 8; i++)); do
