@@ -107,3 +107,11 @@ psc()
 {
 	ps xawf -eo pid,user,cgroup,args
 }
+
+bash_quote()
+{
+	qval=$1
+	qval=${qval//\\/\\\\}
+	qval=${qval//\"/\\\"}
+	qval=${qval//\$/\\\$}
+}
