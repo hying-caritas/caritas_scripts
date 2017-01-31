@@ -2,7 +2,8 @@
 
 usage()
 {
-	echo "$(basename $0) <file name>" 1>&2
+	prog=$(basename "$0")
+	echo "$prog <file name>" 1>&2
 	exit 1
 }
 
@@ -18,7 +19,7 @@ file=$(basename "$path" | iconv -t UTF-8) || {
 	exit 3
 }
 
-qfile="=?UTF-8?B?"$(echo -n "$file" | base64)"?="
+qfile="=?UTF-8?B?$(echo -n "$file" | base64)?="
 
 mime_type=application/octet-stream
 [[ "$file" =~ .*\.txt$ ]] && mime_type="text/plain; charset=utf-8"

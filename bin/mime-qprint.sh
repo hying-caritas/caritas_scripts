@@ -23,7 +23,7 @@ for ((i=0; i<${#string}; i++)); do
 			if [[ $c =~ [:ascii:] ]]; then
 				echo -n "$c"
 			else
-				tc="$(echo $c | iconv -t $target_encoding)" || {
+				tc="$(echo "$c" | iconv -t "$target_encoding")" || {
 					echo "Invalid input string!" 1>&2
 					exit 1
 				}
@@ -35,4 +35,4 @@ for ((i=0; i<${#string}; i++)); do
 			;;
 	esac
 done
-echo -n ?=
+echo -n "?="

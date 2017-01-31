@@ -11,67 +11,75 @@ MAKE="make -j$nr_cpu"
 target=$1
 
 xcd() {
-	echo ---- $1 -----
-	if [ ! -d $1 ] ; then
-		mkdir $1
-		cd $1
-		$2 $MAKE -C ../$target O=$(pwd) defconfig
+	echo ---- "$1" -----
+	if [ ! -d "$1" ] ; then
+		mkdir "$1"
+		cd "$1"
+		"$2" "$MAKE" -C ../"$target" O="$(pwd)" defconfig
 	else
-		cd $1
+		cd "$1"
 	fi
 }
 
 oldconfig() {
-	yes "" | $1 $MAKE oldconfig
+	yes "" | "$1" "$MAKE" oldconfig
 }
 
 build() {
 	$MAKE clean
-	$1 nice -n20 $MAKE | tee ../LOG
+	"$1" nice -n20 "$MAKE" | tee ../LOG
 }
 
-xcd obj
-oldconfig
-build
-cd ..
+(
+	xcd obj
+	oldconfig
+	build
+)
 
-xcd obj-up
-./source/scripts/config --disable smp
-oldconfig
-build
-cd ..
+(
+	xcd obj-up
+	./source/scripts/config --disable smp
+	oldconfig
+	build
+)
 
-xcd obj32 linux32
-sh ./source/scripts/config --disable eeepc_laptop
-oldconfig linux32
-build linux32
-cd ..
+(
+	xcd obj32 linux32
+	sh ./source/scripts/config --disable eeepc_laptop
+	oldconfig linux32
+	build linux32
+)
 
-xcd obj32-up linux32
-linux32 ./source/scripts/config \
---disable smp --enable x86_up_apic --enable x86_io_apic --enable X86_UP_IOAPIC
-oldconfig linux32
-build linux32
-cd ..
+(
+	xcd obj32-up linux32
+	linux32 ./source/scripts/config \
+		--disable smp --enable x86_up_apic --enable x86_io_apic --enable X86_UP_IOAPIC
+	oldconfig linux32
+	build linux32
+)
 
-xcd obj-allno
-make allnoconfig
-build
-cd ..
+(
+	xcd obj-allno
+	make allnoconfig
+	build
+)
 
-xcd obj32-allno linux32
-linux32 make allnoconfig
-build linux32
-cd ..
+(
+	xcd obj32-allno linux32
+	linux32 make allnoconfig
+	build linux32
+)
 
-xcd obj-allmod
-make allmodconfig
-./source/scripts/config --disable debug_info
-build
-cd ..
+(
+	xcd obj-allmod
+	make allmodconfig
+	./source/scripts/config --disable debug_info
+	build
+)
 
-xcd obj32-allmod
-linux32 make allmodconfig
-linux32 ./source/scripts/config --disable debug_info
-build linux32
-cd ..
+(
+	xcd obj32-allmod
+	linux32 make allmodconfig
+	linux32 ./source/scripts/config --disable debug_info
+	build linux32
+)

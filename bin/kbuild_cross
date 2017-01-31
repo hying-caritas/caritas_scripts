@@ -12,27 +12,27 @@ target=$1
 
 xcd() {
 	arch=$1
-	dir=obj-$arch
-	echo ---- $arch -----
-	rm -rf $dir
-	if [ ! -d $dir ] ; then
-		mkdir $dir
-		cd $dir
-		kmake_$arch $MAKE_OPT -C ../../$target O=$(pwd) defconfig
+	dir="obj-$arch"
+	echo ---- "$arch" -----
+	rm -rf "$dir"
+	if [ ! -d "$dir" ] ; then
+		mkdir "$dir"
+		cd "$dir"
+		"kmake_$arch" $MAKE_OPT -C ../../"$target" O="$(pwd)" defconfig
 	else
-		cd $dir
+		cd "$dir"
 	fi
 }
 
 oldconfig() {
 	arch=$1
-	yes "" | kmake_$arch $MAKE_OPT oldconfig
+	yes "" | "kmake_$arch" $MAKE_OPT oldconfig
 }
 
 build() {
 	arch=$1
-	kmake_$arch $MAKE_OPT clean
-	nice -n20 kmake_$arch $MAKE_OPT 2>&1 | tee ../log_$arch
+	"kmake_$arch" $MAKE_OPT clean
+	nice -n20 "kmake_$arch" $MAKE_OPT 2>&1 | tee ../"log_$arch"
 }
 
 # do not build on master
@@ -46,9 +46,10 @@ build() {
 #for arch in frv sh4; do
 #MAKE_OPT="-j1"
 for arch in frv sh4 alpha s390 sparc64 arm hppa powerpc i386 x8664; do
-	xcd $arch
-	./source/scripts/config --enable perf_events
-	oldconfig $arch
-	build $arch
-	cd ..
+	(
+		xcd "$arch"
+		./source/scripts/config --enable perf_events
+		oldconfig "$arch"
+		build "$arch"
+	)
 done

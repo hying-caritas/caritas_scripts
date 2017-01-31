@@ -13,7 +13,7 @@ net_dev=
 
 load_config
 
-[ -z "$target_host" -o -z "$target_mac" ] && die "Please configure target hostname/mac"
+( [ -z "$target_host" ] || [ -z "$target_mac" ] ) && die "Please configure target hostname/mac"
 
 cfg source_host "$HOSTNAME"
 cfg src_port 6665
@@ -23,7 +23,7 @@ cfg net_dev eth0
 src_ip=$(lookup $source_host)
 tgt_ip=$(lookup $target_host)
 
-tgt_mac=$target_mac
+tgt_mac="$target_mac"
 
 sudo modprobe -r netconsole >& /dev/null
 sudo modprobe netconsole netconsole="$src_port@$src_ip:/$net_dev,$tgt_port@$tgt_ip/$tgt_mac"

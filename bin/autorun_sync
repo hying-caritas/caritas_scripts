@@ -15,12 +15,12 @@ usage()
 	echo "Usage: $prog <media>"
 }
 
-prog=$(basename $0)
+prog=$(basename "$0")
 
 if [ $# -lt 1 ]; then
 	usage
 	echo -n "Press any key to continue:"
-	read
+	read -r
 	exit -1
 fi
 
@@ -33,15 +33,15 @@ idir=$ldir/data_in
 
 echo "----------------------------------------------"
 echo -n "Rsyncing ..."
-rsync -rutv --delete --modify-window=2 $odir/* $mdir/
+rsync -rutv --delete --modify-window=2 "$odir"/* "$mdir/"
 
-if [ -f $ldir/dirs.in ]; then
-	while read d p; do
+if [ -f "$ldir/dirs.in" ]; then
+	while read -r d p; do
 		if [ -z "$d" ]; then
 			continue;
 		fi
-		rsync -rutv --modify-window=2 $p $mdir/$d $idir/
-	done < $ldir/dirs.in
+		rsync -rutv --modify-window=2 "$p" "$mdir/$d" "$idir/"
+	done < "$ldir/dirs.in"
 fi
 echo "Done!"
 
@@ -52,13 +52,13 @@ echo "Done!"
 
 echo "----------------------------------------------"
 echo -n "Do you want to umount [Y|n]:"
-read is_umount
+read -r is_umount
 if [ "$is_umount" != "n" ]; then
 	echo -n "Unmounting ..."
-	umount /media/$media
+	umount "/media/$media"
 	echo "Done!"
 fi
 
 echo "----------------------------------------------"
 echo -n "Done! press any key to close:"
-read
+read -r

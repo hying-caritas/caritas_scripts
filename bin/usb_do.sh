@@ -10,7 +10,8 @@ load_config
 
 usage()
 {
-	echo "Usage: `basename $0` <command line>"
+	prog=$(basename "$0")
+	echo "Usage: $prog <command line>"
 }
 
 is_usb_bdev()
@@ -22,8 +23,8 @@ is_usb_bdev()
 find_usb_bdev()
 {
 	for bdev in /sys/class/block/sd[b-z]; do
-		bdev=$(basename $bdev)
-		if is_usb_bdev $bdev; then
+		bdev=$(basename "$bdev")
+		if is_usb_bdev "$bdev"; then
 			if [ -n "$USB_BDEV" ]; then
 				die "Mutiple USB devices: $USB_BDEV and $bdev, you specify manually"
 			else
@@ -32,8 +33,8 @@ find_usb_bdev()
 		fi
 	done
 	if [ -n "$USB_BDEV" ]; then
-		if [ -e /sys/class/block/${USB_BDEV}1 ]; then
-			USB_BDEV=${USB_BDEV}1
+		if [ -e "/sys/class/block/${USB_BDEV}1" ]; then
+			USB_BDEV="${USB_BDEV}1"
 		fi
 	fi
 }
@@ -57,14 +58,14 @@ fi
 
 if [ -z "$USB_BDEV" ]; then
 	wait_find_usb_bdev
-	if ! is_usb_bdev $USB_BDEV; then
-		echo $USB_BDEV
+	if ! is_usb_bdev "$USB_BDEV"; then
+		echo "$USB_BDEV"
 		exit 1
 	fi
 fi
 
-sudo mount /dev/$USB_BDEV /mnt
-sudo $@
+sudo mount "/dev/$USB_BDEV" /mnt
+sudo "$@"
 sudo ls -lrt /mnt
 sync
 sync

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while read line; do
+while read -r line; do
 	for ((i=0; i < 8; i++)); do
 		echo -n "$i         "
 	done

@@ -10,7 +10,7 @@ HOME_HTTP_PROXY_PORT=
 WORK_HOSTS=
 HOME_HOSTS=
 WORK_INTERNAL_DOMAINS=
-HOME_INTERNAL_DOMAINs=
+HOME_INTERNAL_DOMAINS=
 WORK_USE_SOCKS_PROXY=
 HOME_USE_SOCKS_PROXY=
 PROXY_CONFIG_FILES=
@@ -21,7 +21,7 @@ cfg CONFIG_DIR "$HOME/.config/switch_net"
 cfg WORK_USE_SOCKS_PROXY 1
 cfg HOME_USE_SOCKS_PROXY 1
 
-prog=$(basename $0)
+prog=$(basename "$0")
 
 usage()
 {
@@ -32,7 +32,7 @@ tnet=$1
 
 if [ "$tnet" = "-i" ]; then
 	echo -n "switch_net [w|H]: "
-	read tnet
+	read -r tnet
 	if [ "$tnet" = w ]; then
 		tnet=work
 	else
@@ -84,9 +84,9 @@ setup_proxy()
 	local proxy_host="$1"
 	local proxy_port="$2"
 	local internal_domains="$3"
-	[ $# -ne 3 ] && die_invalid
+	[ $# -ne 3 ] && die_invalid "$@"
 
-	setup_apt_proxy $proxy_host $proxy_port
+	setup_apt_proxy "$proxy_host" "$proxy_port"
 
 	if [ -z "$proxy_host" ]; then
 		gsettings set org.gnome.system.proxy mode none
@@ -95,8 +95,8 @@ setup_proxy()
 	fi
 	gsettings set org.gnome.system.proxy mode manual
 	for proto in http https ftp; do
-		gsettings set org.gnome.system.proxy.$proto host "$proxy_host"
-		gsettings set org.gnome.system.proxy.$proto port "$proxy_port"
+		gsettings set "org.gnome.system.proxy.$proto" host "$proxy_host"
+		gsettings set "org.gnome.system.proxy.$proto" port "$proxy_port"
 	done
 	if [ -n "$internal_domains" ]; then
 		gsettings set org.gnome.system.proxy ignore-hosts "['localhost', '127.0.0.0/8', $internal_domains]"
@@ -111,7 +111,7 @@ SWITCH_NET_END="# ==== CARITAS SWITCH_NET END ===="
 setup_hosts()
 {
 	local hosts="$1"
-	[ $# -ne 1 ] && die_invalid
+	[ $# -ne 1 ] && die_invalid "$@"
 
 	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" /etc/hosts
 	if [ -z "$hosts" ]; then
@@ -125,7 +125,7 @@ $SWITCH_NET_END" | sudo_outf -a /etc/hosts
 setup_tsocks()
 {
 	local use_proxy="$1"
-	[ $# -ne 1 ] && die_invalid
+	[ $# -ne 1 ] && die_invalid "$@"
 
 	if ! [ -f /etc/tsocks.conf ]; then
 		return
@@ -133,7 +133,7 @@ setup_tsocks()
 
 	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" /etc/tsocks.conf
 
-	if (($use_proxy)); then
+	if ((use_proxy)); then
 		return
 	fi
 	echo "$SWITCH_NET_BEGIN
