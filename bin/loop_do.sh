@@ -4,7 +4,8 @@ set -e
 
 usage()
 {
-	echo "Usage: `basename $0` <loop image> <command line>"
+	prog=$(basename "$0")
+	echo "Usage: $prog <loop image> <command line>"
 }
 
 if [ $# -lt 2 ]; then
@@ -15,7 +16,7 @@ fi
 loop_img=$1
 shift
 
-sudo mount -o loop $loop_img /mnt
+sudo mount -o loop "$loop_img" /mnt
 sudo "$@"
 sync
 sync

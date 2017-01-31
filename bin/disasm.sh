@@ -2,7 +2,8 @@
 
 usage()
 {
-	echo "Usage: $(basename $0) <obj file>"
+	prog=$(basename "$0")
+	echo "Usage: $prog <obj file>"
 	exit 1
 }
 

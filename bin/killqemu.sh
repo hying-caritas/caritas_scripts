@@ -6,7 +6,7 @@ usage()
 	exit 1
 }
 
-[[ $# < 1 ]] && usage
+[ $# -lt 1 ] && usage
 
 name=$1
 shift

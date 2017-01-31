@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/bin/bash
 #TAGS: kernel
 
 set -e
 
-. caritas_functions.sh
+source caritas_functions.sh
 
 MAKE="make -j$nr_cpu"
 

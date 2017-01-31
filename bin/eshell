@@ -4,6 +4,6 @@ program=$(basename "$0")
 [ "$program" != eshell ] && cmd="$program "
 
 cmd="$cmd$*"
-cmd=${cmd//\"/\\\"/}
+cmd=$(echo "$cmd" | sed '1,$s/"/\\"/g')
 
 exec emax -e "(eshell-command \"$cmd\")"

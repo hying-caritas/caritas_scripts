@@ -13,6 +13,6 @@ current_branch=$(git_current_branch)
 git remote update
 git reset --hard
 git checkout tmp
-git branch -D $current_branch
-git branch $current_branch origin/master
-git checkout $current_branch
+git branch -D "$current_branch"
+git branch "$current_branch" origin/master
+git checkout "$current_branch"

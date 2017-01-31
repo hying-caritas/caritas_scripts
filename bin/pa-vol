@@ -3,4 +3,4 @@
 val=${1:-+10%}
 sink=$(pa-default-sink)
 pa-mute 0
-pactl set-sink-volume $sink $val
+pactl set-sink-volume "$sink" "$val"
