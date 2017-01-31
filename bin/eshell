@@ -1,9 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 
 program=$(basename "$0")
-[ "$program" != eshell ] && cmd="$program "
+[ "$program" != eshell ] && cmd="$program"
 
-cmd="$cmd$*"
-cmd=$(echo "$cmd" | sed '1,$s/"/\\"/g')
+for param; do
+	param=${param//\\/\\\\\\\\}
+	param=${param//\"/\\\\\\\"}
+	cmd="$cmd \\\"$param\\\""
+done
 
 exec emax -e "(eshell-command \"$cmd\")"
