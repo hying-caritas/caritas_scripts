@@ -3,13 +3,13 @@ nr_cpu=$(grep -c processor /proc/cpuinfo)
 
 die()
 {
-	echo "die: $@"
+	echo "die:" "$@"
 	exit 231
 }
 
 die_invalid()
 {
-	die "Invalid parameter: $@"
+	die "Invalid parameter:" "$@"
 }
 
 cfg()
@@ -26,14 +26,14 @@ cfg()
 def_cfg()
 {
 	local var="$1"
-	[ $# -ne 1 ] && die_invalid
+	[ $# -ne 1 ] && die_invalid "$@"
 	return 0
 }
 
 load_config()
 {
 	for config_dir in $CARITAS_SCRIPTS_CONFIG ./.caritas_scripts_config $HOME/.config/caritas_scripts; do
-		config_file=$(basename $0)
+		config_file=$(basename "$0")
 		config_path="$config_dir/$config_file"
 		if [ -f "$config_path" ]; then
 			source "$config_path"
@@ -45,7 +45,7 @@ load_config()
 term_chg_title()
 {
 	local title="$1"
-	[ -z "$title" ] && die_invalid
+	[ -z "$title" ] && die_invalid "$@"
 	export PS1="$PS1\[\e]0;$title\a\]"
 }
 
@@ -60,16 +60,16 @@ search_PATH()
 	local path="$1"
 	local dir="$2"
 
-	[ $# -ne 2 ] && die_invalid
+	[ $# -ne 2 ] && die_invalid "$@"
 	echo "$path" | tr ':' '\n' | grep -q "^$dir\$"
 }
 
 prepend_PATH()
 {
 	local dir="$1"
-	[ $# -ne 1 ] && die_invalid
+	[ $# -ne 1 ] && die_invalid "$@"
 	dir=$(normalize_path "$dir")
-	if ! search_PATH $PATH "$dir"; then
+	if ! search_PATH "$PATH" "$dir"; then
 		export PATH=$dir:$PATH
 	fi
 }
@@ -77,7 +77,7 @@ prepend_PATH()
 prepend_PYTHONPATH()
 {
 	local dir="$1"
-	[ $# -ne 1 ] && die_invalid
+	[ $# -ne 1 ] && die_invalid "$@"
 	dir=$(normalize_path "$dir")
 	if [ -z "$PYTHONPATH" ]; then
 		export PYTHONPATH="$dir"
@@ -86,9 +86,11 @@ prepend_PYTHONPATH()
 	fi
 }
 
+temp_file_seq=0
+
 temp_file()
 {
-	temp_file_seq=$((temp_file_n+1))
+	temp_file_seq=$((temp_file_seq+1))
 	local prefix="${1:-$0}"
 	prefix=${prefix////-}
 	if which tempfile &> /dev/null; then
