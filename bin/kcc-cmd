@@ -1,0 +1,3 @@
+#!/bin/sh
+
+sed -nre 's/^\S*-by: //p' "$1"
