@@ -152,3 +152,5 @@ else
 	setup_hosts "$HOME_HOSTS"
 	setup_tsocks "$HOME_USE_SOCKS_PROXY"
 fi
+
+emacsclient -e "(switch-network)" > /dev/null
