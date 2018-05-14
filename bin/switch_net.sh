@@ -127,18 +127,22 @@ setup_tsocks()
 	local use_proxy="$1"
 	[ $# -ne 1 ] && die_invalid "$@"
 
-	if ! [ -f /etc/tsocks.conf ]; then
+	tsocks_conf1=/etc/tsocks.conf
+	tsocks_conf2=/etc/socks/tsocks.conf
+	[ -f $tsocks_conf1 ] && tsocks_conf=$tsocks_conf1
+	[ -f $tsocks_conf2 ] && tsocks_conf=$tsocks_conf2
+	if [ -z $tsocks_conf ]; then
 		return
 	fi
 
-	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" /etc/tsocks.conf
+	sudo sed -ie "/$SWITCH_NET_BEGIN/,/$SWITCH_NET_END/d" $tsocks_conf
 
 	if ((use_proxy)); then
 		return
 	fi
 	echo "$SWITCH_NET_BEGIN
 local = 0.0.0.0/0.0.0.0
-$SWITCH_NET_END" | sudo_outf -a /etc/tsocks.conf
+$SWITCH_NET_END" | sudo_outf -a $tsocks_conf
 }
 
 if [ "$tnet" == "work" ]; then
