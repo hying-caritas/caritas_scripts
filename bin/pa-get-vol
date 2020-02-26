@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pa-list-sink $(pa-default-sink) | sed -ne 's/^[[:space:]]*Volume:.*[^0-9]\([0-9]\+%\).*/\1/p'

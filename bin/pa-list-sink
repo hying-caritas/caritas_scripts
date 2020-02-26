@@ -1,0 +1,9 @@
+#!/bin/bash
+
+sink=$1
+echo $sink
+if [ -n "$sink" ]; then
+	pactl list sinks | sed -ne "/^[[:space:]]*Name:[[:space:]]*$sink[[:space:]]*$/,/^[[:space:]]*Name:/p"
+else
+	pactl list sinks
+fi

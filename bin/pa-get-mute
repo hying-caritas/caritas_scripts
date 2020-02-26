@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pa-list-sink $(pa-default-sink) | sed -ne 's/^[[:space:]]*\(Mute:[[:space:]][^[:space:]]\+\).*$/\1/p'
