@@ -3,8 +3,9 @@
 USERID=$(id -u)
 : "${TMPDIR:=/tmp}"
 : "${EMACS_SERVER_FILE:=$TMPDIR/emacs$USERID/server}"
+: "${EMACS_SERVER_FILE2:=/run/$USERID/emacs/server}"
 
-if [ ! -e "$EMACS_SERVER_FILE" ]; then
+if ! [ -e "$EMACS_SERVER_FILE" ] && [ -e "$EMACS_SERVER_FILE2" ]; then
 	echo "Starting server."
 	emacs --daemon
 	while [ ! -e "$EMACS_SERVER_FILE" ] ; do sleep 1 ; done
