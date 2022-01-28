@@ -1,0 +1,12 @@
+#!/bin/sh
+
+commit=$1
+
+if [ -z "$commit" ]; then
+	echo "Usage: git-format-commit <commit> ..."
+	exit 1
+fi
+
+shift
+
+git format-patch "$commit"~.."$commit" "$@"
