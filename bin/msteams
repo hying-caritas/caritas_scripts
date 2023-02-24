@@ -1,0 +1,15 @@
+#!/bin/sh
+
+usage()
+{
+	echo "$(basename $0) <meeting url>"
+}
+
+[ $# -ne 1 ] && usage
+
+url=$1
+shift
+
+url=msteams://${url#https://}
+
+teams "$url" "$@"
