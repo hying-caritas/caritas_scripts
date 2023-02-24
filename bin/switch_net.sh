@@ -158,3 +158,4 @@ else
 fi
 
 emacsclient -e "(switch-network)" > /dev/null
+systemctl --user restart gvfs-daemon
